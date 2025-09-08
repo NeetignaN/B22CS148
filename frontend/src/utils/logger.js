@@ -5,6 +5,8 @@ const logger = (functionName) => {
   };
 };
 
+const YOUR_TOKEN_HERE = 
+
 export default logger;
 
 export async function log(stack, level, logPackage, message) {
@@ -33,9 +35,13 @@ export async function log(stack, level, logPackage, message) {
       return;
     }
 
+    const evalToken = process.env.REACT_APP_EVAL_TOKEN;
     await fetch('http://20.244.56.144/evaluation-service/logs', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(evalToken ? { 'Authorization': `Bearer ${evalToken}` } : {})
+      },
       body: JSON.stringify({
         stack,
         level,

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import logger, { log } from "../utils/logger";
 
 function Dashboard() {
   const { user } = useContext(AuthContext);
@@ -10,21 +11,32 @@ function Dashboard() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const logFetchUrls = logger("fetchUrls");
     async function fetchUrls() {
+      logFetchUrls();
       try {
         const res = await axios.get(
           `${process.env.REACT_APP_API_BASE_URL}/url`,
           { headers: { Authorization: `Bearer ${user.token}` } }
         );
         setUrls(res.data);
+        await log("frontend", "info", "page", "Fetched URLs successfully");
       } catch (err) {
+        await log(
+          "frontend",
+          "error",
+          "page",
+          err.response?.data?.message || err.message
+        );
         console.error(err.response?.data || err.message);
       }
     }
     fetchUrls();
   }, [user]);
 
+  const logHandleSubmit = logger("handleSubmit");
   async function handleSubmit(e) {
+    logHandleSubmit(e);
     e.preventDefault();
     setError("");
     try {
@@ -36,7 +48,14 @@ function Dashboard() {
       setUrls([...urls, res.data]);
       setLongUrl("");
       setUrlCode("");
+      await log("frontend", "info", "page", "URL shortened successfully");
     } catch (err) {
+      await log(
+        "frontend",
+        "error",
+        "page",
+        err.response?.data?.message || "Something went wrong"
+      );
       setError(err.response?.data?.message || "Something went wrong");
     }
   }
