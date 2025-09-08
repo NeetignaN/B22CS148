@@ -1,0 +1,14 @@
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    PADDING: 1REM;
+
+    background-color: CORAL
+}
+
+.my-link {
+    text-decoration: none;
+    color: black;
+    font-weight: 600;
+    font-size: 2rem;
+}
